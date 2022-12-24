@@ -2,6 +2,26 @@ import "./App.css";
 import Map from "./components/Map";
 import { useEffect, useState } from "react";
 
+//  Global variables
+const options = {
+    enableHighAccuracy: true,
+    maximumAge: 30000,
+    timeout: 27000,
+};
+
+//  Error handling
+function error(err) {
+    if (
+        err.code === 1 || //if user denied accessing the location
+        err.code === 2 || //for any internal errors
+        err.code === 3 //error due to timeout
+    ) {
+        alert(err.message);
+    } else {
+        alert(err);
+    }
+}
+
 export default function App() {
     const [coords, setCorrds] = useState({
         latitude: "",
@@ -18,26 +38,8 @@ export default function App() {
         );
     }, []);
 
-    function error(err) {
-        if (
-            err.code === 1 || //if user denied accessing the location
-            err.code === 2 || //for any internal errors
-            err.code === 3 //error due to timeout
-        ) {
-            alert(err.message);
-        } else {
-            alert(err);
-        }
-    }
-
-    const options = {
-        enableHighAccuracy: true,
-        maximumAge: 30000,
-        timeout: 27000,
-    };
-
     //get current location when the app loads for the first time
-    function getCurrentCityName(position) {
+    async function getCurrentCityName(position) {
         setCorrds({
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
@@ -46,11 +48,11 @@ export default function App() {
         let url =
             "https://nominatim.openstreetmap.org/reverse?format=jsonv2" +
             "&lat=" +
-            coords.latitude +
+            position.coords.latitude +
             "&lon=" +
-            coords.longitude;
+            position.coords.longitude;
 
-        fetch(url, {
+        await fetch(url, {
             method: "GET",
             mode: "cors",
             headers: {
@@ -98,16 +100,16 @@ export default function App() {
         e.preventDefault();
         console.log(address);
 
-        let url = `https://nominatim.openstreetmap.org/search?
-    postalcode=${address.postalcode}&format=json`;
+        let url = `https://nominatim.openstreetmap.org/search?postalcode=${address.postalcode}&format=json`;
 
         getData(url);
+        console.log(url);
     }
 
     return (
         <div className="App">
             <div className="header">
-                <h1>Enter The Postal Code</h1>
+                <h1>Enter A Postal Code</h1>
                 <section className="form-container">
                     <form>
                         <label>Postal code:</label>

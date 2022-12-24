@@ -5,11 +5,11 @@
 }
 
 .header {
-    display: flex;
+    display: absolute;
     flex-direction: column;
     background-color: rgba(10, 230, 10, 0.275);
     padding: 20px;
-    width: 100%;
+    width: auto;
     /* text-align: center; */
 }
 
